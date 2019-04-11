@@ -13,6 +13,7 @@ typedef struct Nodo
 }tNodo;
 typedef tNodo *Lista;
 
+
 Lista CreaNodo(int id, double x, double y)
 {
     Lista aux;
@@ -37,9 +38,33 @@ Lista CreaNodo(int id, double x, double y)
     }
     return aux;
 }
+
+Lista InsertarFinal(Lista L,int id, double x, double y)
+{
+    Lista pNodo, aux;
+    pNodo = CreaNodo(id,x,y)
+    if (L == NULL)
+    {
+        L = pNodo;
+    }
+    else 
+    {
+        aux = L;
+        while(aux->sig != NULL)
+        {
+            aux = aux->sig;
+        }
+        aux->sig = pNodo;
+        aux = NULL;
+    }
+    pNodo = NULL;
+    return L;
+}
+
 void LecturaArchivo(char n_arch[50])
 {
     FILE *arch;
+    Lista L = NULL;
     int nodos, id, c1, c2, c3, i;
     double x, y;
 
@@ -59,8 +84,7 @@ void LecturaArchivo(char n_arch[50])
             fscanf(arch, "%d", &id);
             fscanf(arch, "%lf", &x);
             fscanf(arch, "%lf", &y);
-            CreaNodo(id,x,y);
-        }
+            InsertarFinal(L,id,x,y);
         fclose(arch);
     }
     else

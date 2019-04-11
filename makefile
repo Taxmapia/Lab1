@@ -1,4 +1,4 @@
-all: TSP
+all: tsp
 
 %: %.cc
 	g++ -std=gnu++11 $< -o $@
