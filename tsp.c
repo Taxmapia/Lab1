@@ -13,7 +13,16 @@ typedef struct Nodo
 }tNodo;
 typedef tNodo *Lista;
 
-
+void MostrarLista(Lista L)
+{
+   Lista aux;
+   printf("\nL");
+   while(aux != NULL)
+   {
+	printf(" -> %d",aux->id);
+	aux = aux->sig;
+   }
+}
 Lista CreaNodo(int id, double x, double y)
 {
     Lista aux;
@@ -42,7 +51,7 @@ Lista CreaNodo(int id, double x, double y)
 Lista InsertarFinal(Lista L,int id, double x, double y)
 {
     Lista pNodo, aux;
-    pNodo = CreaNodo(id,x,y)
+    pNodo = CreaNodo(id,x,y);
     if (L == NULL)
     {
         L = pNodo;
@@ -64,28 +73,31 @@ Lista InsertarFinal(Lista L,int id, double x, double y)
 void LecturaArchivo(char n_arch[50])
 {
     FILE *arch;
-    Lista L = NULL;
     int nodos, id, c1, c2, c3, i;
     double x, y;
+	Lista L = NULL;
 
 
     arch = fopen(n_arch, "r");
     if (arch != NULL)
     {
+	
         fscanf(arch, "%d", &nodos);
         printf("\nLa cantidad de ciudades es: %d", nodos);
         fscanf(arch, "%d", &c1);
         fscanf(arch, "%d", &c2);
         fscanf(arch, "%d", &c3);
         printf("\nCiudades de inicio: %d, %d, %d \n", c1, c2, c3);
-        for (i = 1; i <= nodos; i++)
+        for (i = 0; i < nodos; i++)
         {
 	    printf("--------------------------------------------------\n");
             fscanf(arch, "%d", &id);
             fscanf(arch, "%lf", &x);
             fscanf(arch, "%lf", &y);
             InsertarFinal(L,id,x,y);
-        fclose(arch);
+            
+    	}
+    	fclose(arch);
     }
     else
     {
@@ -93,11 +105,15 @@ void LecturaArchivo(char n_arch[50])
         printf("\nEjecute el programa ingresando la instancia.");
         printf("\nEj: ./Tsp burma14.tsp\n");
     }
+    
+    MostrarLista(L);
 }
 //Main
 int main(int argc , char* argv[])
 {
-    LecturaArchivo(argv[1]);
+	
+	LecturaArchivo(argv[1]);
+	
 
     return 0;
 }
