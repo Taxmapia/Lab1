@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 
 //Estructura
@@ -16,18 +17,7 @@ typedef tNodo *Lista;
 Lista Ln = NULL;
 Lista Ls = NULL;
 
-void MostrarLista(Lista L)
-{
-   Lista aux = L;
-   printf("L\n");
-   while(aux != NULL)
-   {
-    printf("-> %d \n",aux->id);
-    aux = aux->sig;
-   }
-   
-}
-int DistanciaAcumulada(Lista L)
+double DistanciaAcumulada(Lista L)
 {
     Lista aux;
     double dist_acum, dist, x1, y1, x2, y2;
@@ -39,17 +29,17 @@ int DistanciaAcumulada(Lista L)
         x2 = aux->sig->x;
         y2 = aux->sig->y;
         dist = sqrt(pow(x1 - x2,2) + pow(y1 - y2,2));
-        dist_acum = dist_acum + distancia;
+        dist_acum = dist_acum + dist;
         aux = aux->sig;
     }
     x1 = aux->x;
     y1 = aux->y;
     x2 = L->x;
     y2 = L->y;
-    distancia = sqrt(pow(Cx1 - Cx2,2) + pow(Cy1 - Cy2,2));
-    dist_acum += dsit;
+    dist = sqrt(pow(x1 - x2,2) + pow(y1 - y2,2));
+    dist_acum += dist;
 
-    return acum;
+    return dist_acum;
 }
 Lista CreaNodo(int id, double x, double y)
 {
@@ -62,7 +52,7 @@ Lista CreaNodo(int id, double x, double y)
         aux->y = y;
         aux->sig = NULL;
         printf("Nodo %d, tiene las coordenadas X: %.2lf , Y: %.2lf\n", aux->id, aux->x, aux->y);
-        aux = aux->sig;
+        //aux = aux->sig;
     }
     else
     {
@@ -75,7 +65,6 @@ Lista CreaNodo(int id, double x, double y)
     }
     return aux;
 }
-
 Lista InsertarFinal(Lista L,int id, double x, double y)
 {
     Lista pNodo, aux;
@@ -97,7 +86,20 @@ Lista InsertarFinal(Lista L,int id, double x, double y)
     pNodo = NULL;
     return L;
 }
-
+void MostrarLista(Lista L)
+{
+   Lista aux = L;
+   printf("--------------------------------------\n");
+   printf("L ");
+   while(aux != NULL)
+   {
+    printf("-> %d",aux->id);
+    aux = aux->sig;
+   }
+   printf("-> NULL\n");
+   printf("--------------------------------------\n");
+   
+}
 void LecturaArchivo(char n_arch[50])
 {
     FILE *arch;
@@ -120,7 +122,7 @@ void LecturaArchivo(char n_arch[50])
             fscanf(arch, "%d", &id);
             fscanf(arch, "%lf", &x);
             fscanf(arch, "%lf", &y);
-            if (id == c1||id == c2||id == c3)
+            if (id == c1||id == c2||id == c3||id==(nodos)-1)
             {
                 Ls = InsertarFinal(Ls,id,x,y);
             }
@@ -128,10 +130,10 @@ void LecturaArchivo(char n_arch[50])
             {
                 Ln = InsertarFinal(Ln,id,x,y);
             }
-            MostrarLista(Ls);
-            MostrarLista(Ln);
     	}
     	fclose(arch);
+        MostrarLista(Ls);
+        MostrarLista(Ln);
     }
     else
     {
@@ -144,10 +146,7 @@ void LecturaArchivo(char n_arch[50])
 //Main
 int main(int argc , char* argv[])
 {
-
 	LecturaArchivo(argv[1]);
-
-
     return 0;
 }
 
