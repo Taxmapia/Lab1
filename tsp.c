@@ -89,15 +89,15 @@ Lista InsertarFinal(Lista L,int id, double x, double y)
 void MostrarLista(Lista L)
 {
    Lista aux = L;
-   printf("--------------------------------------\n");
-   printf("L ");
+   printf("-------------------------------------------------------------\n");
+   printf("L->");
    while(aux != NULL)
    {
-    printf("-> %d",aux->id);
+    printf(" %d",aux->id);
     aux = aux->sig;
    }
-   printf("-> NULL\n");
-   printf("--------------------------------------\n");
+   printf(" %d\n",L->id);
+   printf("-------------------------------------------------------------\n");
    
 }
 void LecturaArchivo(char n_arch[50])
@@ -132,7 +132,10 @@ void LecturaArchivo(char n_arch[50])
             }
     	}
     	fclose(arch);
+        printf("******************************************\n");
+        printf("\t<Lista Solucion>\n");
         MostrarLista(Ls);
+        printf("\t<Lista Ciudades>\n");
         MostrarLista(Ln);
     }
     else
