@@ -27,6 +27,30 @@ void MostrarLista(Lista L)
    }
    
 }
+int DistanciaAcumulada(Lista L)
+{
+    Lista aux;
+    double dist_acum, dist, x1, y1, x2, y2;
+    aux = L;
+    while(aux->sig != NULL)
+    {
+        x1 = aux->x;
+        y1 = aux->y;
+        x2 = aux->sig->x;
+        y2 = aux->sig->y;
+        dist = sqrt(pow(x1 - x2,2) + pow(y1 - y2,2));
+        dist_acum = dist_acum + distancia;
+        aux = aux->sig;
+    }
+    x1 = aux->x;
+    y1 = aux->y;
+    x2 = L->x;
+    y2 = L->y;
+    distancia = sqrt(pow(Cx1 - Cx2,2) + pow(Cy1 - Cy2,2));
+    dist_acum += dsit;
+
+    return acum;
+}
 Lista CreaNodo(int id, double x, double y)
 {
     Lista aux;
