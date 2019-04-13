@@ -56,7 +56,7 @@ Lista InsertarFinal(Lista L,int id, double x, double y)
     {
         L = pNodo;
     }
-    else 
+    else
     {
         aux = L;
         while(aux->sig != NULL)
@@ -81,7 +81,7 @@ void LecturaArchivo(char n_arch[50])
     arch = fopen(n_arch, "r");
     if (arch != NULL)
     {
-	
+
         fscanf(arch, "%d", &nodos);
         printf("\nLa cantidad de ciudades es: %d", nodos);
         fscanf(arch, "%d", &c1);
@@ -94,8 +94,8 @@ void LecturaArchivo(char n_arch[50])
             fscanf(arch, "%d", &id);
             fscanf(arch, "%lf", &x);
             fscanf(arch, "%lf", &y);
-            InsertarFinal(L,id,x,y);
-            
+            L = InsertarFinal(L,id,x,y);
+
     	}
     	fclose(arch);
     }
@@ -105,15 +105,15 @@ void LecturaArchivo(char n_arch[50])
         printf("\nEjecute el programa ingresando la instancia.");
         printf("\nEj: ./Tsp burma14.tsp\n");
     }
-    
+
     MostrarLista(L);
 }
 //Main
 int main(int argc , char* argv[])
 {
-	
+
 	LecturaArchivo(argv[1]);
-	
+
 
     return 0;
 }
