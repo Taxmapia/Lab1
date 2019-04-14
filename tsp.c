@@ -41,6 +41,51 @@ double DistanciaAcumulada(Lista L)
 
     return dist_acum;
 }
+int LargoLista(Lista L)
+{
+    Lista aux= L;
+    int i = 0;
+
+    while (aux != NULL)
+    {
+        aux = aux->sig;
+        i++;
+    }
+    return i;
+}
+Lista InsertarPosicion(Lista L, int id, double x ,double y, int p)
+{
+    Lista pNodo, aux;
+    int i, largo;
+
+    largo = LargoLista(L);
+    pNodo = CreaNodo(id,x,y);
+    if (p <= largo+1)
+    {
+        if (p == 1)
+            L = InsertarInicio(L, x);
+        else
+        {
+            if (p == largo+1)
+                L = InsertarFinal(L, x);
+            else
+            {
+                aux = L;
+                i = 1;
+                while (i < p-1)
+                {
+                    aux = aux->sig;
+                    i = i+1;
+                }
+                pNodo->sig = aux->sig;
+                aux->sig = pNodo;
+                aux = NULL;
+            }
+        }
+    }
+    pNodo = NULL;
+    return L;
+}
 Lista CreaNodo(int id, double x, double y)
 {
     Lista aux;
@@ -64,6 +109,17 @@ Lista CreaNodo(int id, double x, double y)
         exit(1);
     }
     return aux;
+}
+Lista InsertarInicio(Lista L, int id, double x, double y)
+{
+    Lista pNodo;
+
+    pNodo = CreaNodo(id,x,y);
+    pNodo->sig = L;
+    L = pNodo;
+    pNodo = NULL;
+
+    return L;
 }
 Lista InsertarFinal(Lista L,int id, double x, double y)
 {
@@ -98,7 +154,65 @@ void MostrarLista(Lista L)
    }
    printf(" %d\n",L->id);
    printf("-------------------------------------------------------------\n");
-   
+
+}
+int LocalizarPosicion(Lista L, int id)
+{
+Lista aux;
+int i;
+
+    if (BuscarElemento(L,id))
+    {
+    aux = L;
+    i = 1;
+    while (aux->info != id)
+    {
+        aux = aux->sig;
+        i++;
+    }
+    return i;
+}
+    else
+    {
+      return -1;
+    }
+}
+bool BuscarElemento(Lista L, int id)
+{
+Lista aux;
+
+    aux = L;
+    while(aux != NULL)
+    {
+        if (aux->info == id)
+            return true;
+        else
+            aux = aux->sig;
+    }
+    return false;
+}
+Lista ActualizaLista(Lista L, int p, int id, double x, double y)
+{
+    Lista aux, auxNodo;
+    int largo, i;
+
+    largo = LargoLista(L);
+
+    if ((p <= largo) || (L != NULL))
+    {
+        i = 1;
+        aux = L;
+        while (i < p)
+        {
+            aux = aux->sig;
+            i++;
+        }
+        aux->id  = id;
+        aux->x  = x;
+        aux->y  = y;
+        aux = NULL;
+    }
+    return L;
 }
 void LecturaArchivo(char n_arch[50])
 {
@@ -144,7 +258,7 @@ void LecturaArchivo(char n_arch[50])
         printf("\nEjecute el programa ingresando la instancia.");
         printf("\nEj: ./Tsp burma14.tsp\n");
     }
-    
+
 }
 //Main
 int main(int argc , char* argv[])
@@ -152,4 +266,3 @@ int main(int argc , char* argv[])
 	LecturaArchivo(argv[1]);
     return 0;
 }
-
