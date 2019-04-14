@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-
+#include <stdbool.h>
 
 //Estructura
 typedef struct Nodo
@@ -14,8 +14,8 @@ typedef struct Nodo
 }tNodo;
 typedef tNodo *Lista;
 
-Lista Ln = NULL;
 Lista Ls = NULL;
+Lista Ln = NULL;
 
 double DistanciaAcumulada(Lista L)
 {
@@ -28,7 +28,7 @@ double DistanciaAcumulada(Lista L)
         y1 = aux->y;
         x2 = aux->sig->x;
         y2 = aux->sig->y;
-        dist = sqrt(pow(x1 - x2,2) + pow(y1 - y2,2));
+        dist = sqrt(pow(x2 - x1,2) + pow(y2 - y1,2));
         dist_acum = dist_acum + dist;
         aux = aux->sig;
     }
@@ -36,7 +36,7 @@ double DistanciaAcumulada(Lista L)
     y1 = aux->y;
     x2 = L->x;
     y2 = L->y;
-    dist = sqrt(pow(x1 - x2,2) + pow(y1 - y2,2));
+    dist = sqrt(pow(x2 - x1,2) + pow(y2 - y1,2));
     dist_acum += dist;
 
     return dist_acum;
@@ -53,39 +53,6 @@ int LargoLista(Lista L)
     }
     return i;
 }
-Lista InsertarPosicion(Lista L, int id, double x ,double y, int p)
-{
-    Lista pNodo, aux;
-    int i, largo;
-
-    largo = LargoLista(L);
-    pNodo = CreaNodo(id,x,y);
-    if (p <= largo+1)
-    {
-        if (p == 1)
-            L = InsertarInicio(L, x);
-        else
-        {
-            if (p == largo+1)
-                L = InsertarFinal(L, x);
-            else
-            {
-                aux = L;
-                i = 1;
-                while (i < p-1)
-                {
-                    aux = aux->sig;
-                    i = i+1;
-                }
-                pNodo->sig = aux->sig;
-                aux->sig = pNodo;
-                aux = NULL;
-            }
-        }
-    }
-    pNodo = NULL;
-    return L;
-}
 Lista CreaNodo(int id, double x, double y)
 {
     Lista aux;
@@ -97,7 +64,6 @@ Lista CreaNodo(int id, double x, double y)
         aux->y = y;
         aux->sig = NULL;
         printf("Nodo %d, tiene las coordenadas X: %.2lf , Y: %.2lf\n", aux->id, aux->x, aux->y);
-        //aux = aux->sig;
     }
     else
     {
@@ -142,54 +108,97 @@ Lista InsertarFinal(Lista L,int id, double x, double y)
     pNodo = NULL;
     return L;
 }
+Lista InsertarPosicion(Lista L, int id, double x ,double y, int p)
+{
+    Lista pNodo, aux;
+    int i, largo;
+
+    largo = LargoLista(L);
+    pNodo = CreaNodo(id,x,y);
+    if (p <= largo+1)
+    {
+        if (p == 1)
+            L = InsertarInicio(L,id,x,y);
+        else
+        {
+            if (p == largo+1)
+                L = InsertarFinal(L,id,x,y);
+            else
+            {
+                aux = L;
+                i = 1;
+                while (i < p-1)
+                {
+                    aux = aux->sig;
+                    i = i+1;
+                }
+                pNodo->sig = aux->sig;
+                aux->sig = pNodo;
+                aux = NULL;
+            }
+        }
+    }
+    pNodo = NULL;
+    return L;
+}
 void MostrarLista(Lista L)
 {
    Lista aux = L;
    printf("-------------------------------------------------------------\n");
-   printf("L->");
-   while(aux != NULL)
-   {
-    printf(" %d",aux->id);
-    aux = aux->sig;
-   }
-   printf(" %d\n",L->id);
-   printf("-------------------------------------------------------------\n");
-
-}
-int LocalizarPosicion(Lista L, int id)
-{
-Lista aux;
-int i;
-
-    if (BuscarElemento(L,id))
+   printf("L");
+   if (L != NULL)
     {
-    aux = L;
-    i = 1;
-    while (aux->info != id)
-    {
+       while(aux != NULL)
+       {
+        printf("-> (%d,%.2lf,%.2lf) ",aux->id,aux->x,aux->y);
         aux = aux->sig;
-        i++;
+       }
+       //printf("-> (%d,%.2lf,%.2lf).\n",L->id,L->x,L->y);
+       printf("\n-------------------------------------------------------------\n");
     }
-    return i;
-}
-    else
+    else 
     {
-      return -1;
+        printf("-> NULL\n");
     }
 }
 bool BuscarElemento(Lista L, int id)
 {
-Lista aux;
+    Lista aux;
 
     aux = L;
     while(aux != NULL)
     {
-        if (aux->info == id)
+        if (aux->id == id)
+        {
             return true;
+        }
         else
+        {
             aux = aux->sig;
+        }
     }
     return false;
+}
+int LocalizarPosicion(Lista L, int id)
+{
+    Lista aux;
+    int i;
+
+    if (BuscarElemento(L,id))
+    {
+        aux = L;
+        i = 1;
+        while (aux->id != id)
+        {
+            aux = aux->sig;
+            i++;
+        }
+        return i;
+    }
+    else
+    {
+      return -1;
+    }
 }
 Lista ActualizaLista(Lista L, int p, int id, double x, double y)
 {
@@ -214,16 +223,12 @@ Lista ActualizaLista(Lista L, int p, int id, double x, double y)
     }
     return L;
 }
-Lista OrdenarLCiudades(Lista L)
-{
-  Lista O = L;
-
-}
 void LecturaArchivo(char n_arch[50])
 {
     FILE *arch;
     int nodos, id, c1, c2, c3, i;
     double x, y;
+    Lista C1= NULL, C2=NULL, C3=NULL;
 
     arch = fopen(n_arch, "r");
     if (arch != NULL)
@@ -237,28 +242,36 @@ void LecturaArchivo(char n_arch[50])
         printf("\nCiudades de inicio: %d, %d, %d \n", c1, c2, c3);
         for (i = 0; i < nodos; i++)
         {
-
-	          printf("--------------------------------------------------\n");
+            printf("--------------------------------------------------\n");
             fscanf(arch, "%d", &id);
             fscanf(arch, "%lf", &x);
             fscanf(arch, "%lf", &y);
 
-            /*if (id == c1||id == c2||id == c3||id==(nodos)-1)
+            if(id == c1)
             {
-                Ls = InsertarFinal(Ls,id,x,y);
+                C1 = CreaNodo(id,x,y);
             }
-            else
+            else if(id == c2)
+            {
+                C2 = CreaNodo(id,x,y);
+            }
+            else if(id == c3)
+            {
+                C3 = CreaNodo(id,x,y);
+            }
+            if((id != c1) && (id != c2) && (id != c3))
             {
                 Ln = InsertarFinal(Ln,id,x,y);
-            }*/
-    	   }
-
-    	   fclose(arch);
-         printf("******************************************\n");
-         printf("\t<Lista Solucion>\n");
-         MostrarLista(Ls);
-         printf("\t<Lista Ciudades>\n");
-         MostrarLista(Ln);
+            }
+        }
+        fclose(arch);
+        printf("--------------------------------------------------\n\n\n");
+        printf("**************************************************\n");
+        printf("Nodos Iniciales:\n");
+        Ls = CreaNodo(C1->id,C1->x,C1->y);
+        Ls = InsertarFinal(Ls,C2->id,C2->x,C2->y);
+        Ls = InsertarFinal(Ls,C3->id,C3->x,C3->y);
+        printf("***************************************************\n\n\n");
     }
     else
     {
@@ -272,5 +285,10 @@ void LecturaArchivo(char n_arch[50])
 int main(int argc , char* argv[])
 {
 	LecturaArchivo(argv[1]);
+
+        printf("\t<Lista Solucion Inicial>\n");
+        MostrarLista(Ls);
+        printf("\t<Lista Ciudades Restantes>\n");
+        MostrarLista(Ln);
     return 0;
 }
