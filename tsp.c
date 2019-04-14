@@ -214,6 +214,11 @@ Lista ActualizaLista(Lista L, int p, int id, double x, double y)
     }
     return L;
 }
+Lista OrdenarLCiudades(Lista L)
+{
+  Lista O = L;
+
+}
 void LecturaArchivo(char n_arch[50])
 {
     FILE *arch;
@@ -232,25 +237,28 @@ void LecturaArchivo(char n_arch[50])
         printf("\nCiudades de inicio: %d, %d, %d \n", c1, c2, c3);
         for (i = 0; i < nodos; i++)
         {
-	        printf("--------------------------------------------------\n");
+
+	          printf("--------------------------------------------------\n");
             fscanf(arch, "%d", &id);
             fscanf(arch, "%lf", &x);
             fscanf(arch, "%lf", &y);
-            if (id == c1||id == c2||id == c3||id==(nodos)-1)
+
+            /*if (id == c1||id == c2||id == c3||id==(nodos)-1)
             {
                 Ls = InsertarFinal(Ls,id,x,y);
             }
             else
             {
                 Ln = InsertarFinal(Ln,id,x,y);
-            }
-    	}
-    	fclose(arch);
-        printf("******************************************\n");
-        printf("\t<Lista Solucion>\n");
-        MostrarLista(Ls);
-        printf("\t<Lista Ciudades>\n");
-        MostrarLista(Ln);
+            }*/
+    	   }
+
+    	   fclose(arch);
+         printf("******************************************\n");
+         printf("\t<Lista Solucion>\n");
+         MostrarLista(Ls);
+         printf("\t<Lista Ciudades>\n");
+         MostrarLista(Ln);
     }
     else
     {
