@@ -19,7 +19,10 @@ Lista Ln = NULL;
 
 double DistEuc(double x1,double y1,double x2, double y2)
 {
-    double d = sqrt(pow(x2 - x1,2) + pow(y2 - y1,2));
+    double resta_x,resta_y;
+    resta_x = (x2-x1);
+    resta_y = (y2-y1);
+    double d = sqrt(pow(resta_x,2) + pow(resta_y,2));
     return d;
 }
 double DistanciaAcumulada(Lista L)
@@ -362,35 +365,71 @@ Lista VecinoMasCercano(Lista Ls,Lista Ln)
     Lista auxs,auxn,L;
     auxs = Ls->sig;
     auxn = Ln;
-    double d1,d2,menor;
+    double d1,menor;
 
     while(auxs != NULL)
     {
         auxs = auxs->sig;
-        n = Ln;
+        L = Ln;
         menor = DistEuc(auxs->x,auxs->y,auxn->x,auxn->y);
         while(auxn != NULL)
         {
-            menor = DistEuc(auxs->x,auxs->y,auxn->x,auxn->y);
             d1 = DistEuc(auxs->x,auxs->y,auxn->x,auxn->y);
-            d2 = DistEuc(auxs->x,auxs->y,auxn->sig->x,auxn->sig->y);
-            if (menor < d1)
+            if (menor > d1)
             {
                 menor = d1;
-                n = auxn;
-            }
-            else if(menor < d2)
-            {
-                menor = d2;
-                n = auxn->sig;
+                L = auxn;
             }
             auxn = auxn->sig;
         }
-        Ls = InsertarFinal(Ls,)
+        Ls = InsertarFinal(Ls,L->id,L->x,L->y);
     }
     return Ls;
-
 }
+void TravelmanSaleProblem()
+{
+    Lista auxN = Ln;
+    Lista auxS = Ls;
+    double d_total;
+    int nodos_restantes = LargoLista(Ln);
+
+    printf("\n\n");
+    while(nodos_restantes > 0)
+    {
+        int p, i, largo_auxS;
+        double menor, dist;
+
+        menor = 0;
+        dist = 0;
+        p = 0;
+        largo_auxS = 0;
+        largo_auxS = LargoLista(auxS);
+
+        for(i=2; i<=largo_auxS+1; i++)
+        {
+            auxS = InsertarPosicion(auxS, auxN->id, auxN->x, auxN->y, i);
+            dist = DistanciaAcumulada(auxS);
+            auxS = EliminaLista(auxS,i);
+
+            if(i == 2)
+            {
+                p = 2;
+                menor = dist;
+            }
+            if (dist < menor)
+            {
+                p = i;
+                menor = dist;
+            }
+        }
+        auxS = InsertarPosicion(auxS, auxN->id, auxN->x, auxN->y, p);
+        auxN = EliminaLista(auxN, 1);
+        nodos_restantes = LargoLista(auxN);
+    }
+    printf("\t<Lista Solucion>\n\n");
+    MostrarLista(auxS,DistanciaAcumulada(auxS));
+}
+
 //Main
 int main(int argc , char* argv[])
 {
@@ -401,7 +440,10 @@ int main(int argc , char* argv[])
     printf("\t<Lista Ciudades Restantes>\n\n");
     MostrarLista(Ln,DistanciaAcumulada(Ln));
     printf("\t<Lista Solucion>\n\n");
-    OrdenarLs(Ls);
+    Ls = OrdenarLs(Ls);
     MostrarLista(Ls,DistanciaAcumulada(Ls));
+    TravelmanSaleProblem();
+    
+
     return 0;
 }
