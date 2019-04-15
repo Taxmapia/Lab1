@@ -17,6 +17,11 @@ typedef tNodo *Lista;
 Lista Ls = NULL;
 Lista Ln = NULL;
 
+double DistEuc(double x1,double y1,double x2, double y2)
+{
+    double d = sqrt(pow(x2 - x1,2) + pow(y2 - y1,2));
+    return d;
+}
 double DistanciaAcumulada(Lista L)
 {
     Lista aux;
@@ -28,8 +33,8 @@ double DistanciaAcumulada(Lista L)
         y1 = aux->y;
         x2 = aux->sig->x;
         y2 = aux->sig->y;
-        dist = sqrt(pow(x2 - x1,2) + pow(y2 - y1,2));
-        dist_acum = dist_acum + dist;
+        dist = DistEuc(x1,y1,x2,y2);
+        dist_acum += dist;
         aux = aux->sig;
     }
     x1 = aux->x;
@@ -63,7 +68,6 @@ Lista CreaNodo(int id, double x, double y)
         aux->x = x;
         aux->y = y;
         aux->sig = NULL;
-        printf("Nodo %d, tiene las coordenadas X: %.2lf , Y: %.2lf\n", aux->id, aux->x, aux->y);
     }
     else
     {
@@ -141,20 +145,79 @@ Lista InsertarPosicion(Lista L, int id, double x ,double y, int p)
     pNodo = NULL;
     return L;
 }
-void MostrarLista(Lista L)
+Lista EliminaLista(Lista L, int id) 
+{
+   Lista aux1, aux2;
+   
+   if (L->id == id)
+   {
+      aux1 = L;
+      L = L->sig;
+      aux1->sig = NULL;
+      free(aux1);
+   }
+   else
+   {
+      aux1 = L;
+      while(aux1->id != id)
+    {
+         aux1 = aux1->sig;
+    }
+      aux2 = L;
+      while (aux2->sig = aux1)
+    {
+         aux2 = aux2->sig;
+    }
+      aux2->sig = aux1->sig;
+      aux1->sig = NULL;
+      free(aux1);
+      aux2 = NULL;
+   }
+   return L; 
+}
+Lista EliminaListaPosicion(Lista L, int p) 
+{ 
+    Lista aux, auxNodo;
+    int i;
+    aux = L;
+
+    if(p == 1)
+    {
+        L = L->sig;
+        aux->sig = NULL;
+        free(aux);   
+    }
+    else
+    {
+        i = 1;
+        while(i < p-1)
+        {
+            aux = aux->sig; 
+            i++;
+        }
+        auxNodo = aux->sig;
+        aux->sig  = auxNodo->sig;
+        auxNodo->sig = NULL;
+        free(auxNodo);
+    }
+    return L;
+}
+void MostrarLista(Lista L,double dist_acum)
 {
    Lista aux = L;
-   printf("-------------------------------------------------------------\n");
-   printf("L");
+   printf("Costo: %.2lf\n",dist_acum);
+   printf("L ->");
    if (L != NULL)
     {
        while(aux != NULL)
        {
-        printf("-> (%d,%.2lf,%.2lf) ",aux->id,aux->x,aux->y);
+        printf(" %d",aux->id);
         aux = aux->sig;
        }
+       printf("\n****************************************************************************\n\n");
+       
        //printf("-> (%d,%.2lf,%.2lf).\n",L->id,L->x,L->y);
-       printf("\n-------------------------------------------------------------\n");
+
     }
     else 
     {
@@ -246,7 +309,7 @@ void LecturaArchivo(char n_arch[50])
             fscanf(arch, "%d", &id);
             fscanf(arch, "%lf", &x);
             fscanf(arch, "%lf", &y);
-
+            printf("Nodo %d, tiene las coordenadas X: %.2lf , Y: %.2lf\n", id, x, y);
             if(id == c1)
             {
                 C1 = CreaNodo(id,x,y);
@@ -263,15 +326,13 @@ void LecturaArchivo(char n_arch[50])
             {
                 Ln = InsertarFinal(Ln,id,x,y);
             }
+
         }
         fclose(arch);
-        printf("--------------------------------------------------\n\n\n");
-        printf("**************************************************\n");
-        printf("Nodos Iniciales:\n");
-        Ls = CreaNodo(C1->id,C1->x,C1->y);
+        printf("--------------------------------------------------\n\n");
+        Ls = InsertarFinal(Ls,C1->id,C1->x,C1->y);
         Ls = InsertarFinal(Ls,C2->id,C2->x,C2->y);
         Ls = InsertarFinal(Ls,C3->id,C3->x,C3->y);
-        printf("***************************************************\n\n\n");
     }
     else
     {
@@ -279,6 +340,55 @@ void LecturaArchivo(char n_arch[50])
         printf("\nEjecute el programa ingresando la instancia.");
         printf("\nEj: ./Tsp burma14.tsp\n");
     }
+}
+Lista OrdenarLs(Lista L)
+{
+    Lista aux,aux2;
+    aux = L->sig;
+    aux2 = aux->sig;
+    if (DistEuc(L->x,L->y,aux->x,aux->y) < DistEuc(L->x,L->y,aux2->x,aux2->y))
+    {
+        return L;
+    }
+    else
+    {
+        L = InsertarPosicion(L,aux2->id,aux2->x,aux2->y,2);
+        L = EliminaListaPosicion(L,4);
+    }
+    return L;
+}
+Lista VecinoMasCercano(Lista Ls,Lista Ln)
+{
+    Lista auxs,auxn,L;
+    auxs = Ls->sig;
+    auxn = Ln;
+    double d1,d2,menor;
+
+    while(auxs != NULL)
+    {
+        auxs = auxs->sig;
+        n = Ln;
+        menor = DistEuc(auxs->x,auxs->y,auxn->x,auxn->y);
+        while(auxn != NULL)
+        {
+            menor = DistEuc(auxs->x,auxs->y,auxn->x,auxn->y);
+            d1 = DistEuc(auxs->x,auxs->y,auxn->x,auxn->y);
+            d2 = DistEuc(auxs->x,auxs->y,auxn->sig->x,auxn->sig->y);
+            if (menor < d1)
+            {
+                menor = d1;
+                n = auxn;
+            }
+            else if(menor < d2)
+            {
+                menor = d2;
+                n = auxn->sig;
+            }
+            auxn = auxn->sig;
+        }
+        Ls = InsertarFinal(Ls,)
+    }
+    return Ls;
 
 }
 //Main
@@ -286,9 +396,12 @@ int main(int argc , char* argv[])
 {
 	LecturaArchivo(argv[1]);
 
-        printf("\t<Lista Solucion Inicial>\n");
-        MostrarLista(Ls);
-        printf("\t<Lista Ciudades Restantes>\n");
-        MostrarLista(Ln);
+    printf("\t<Lista Solucion Inicial>\n\n");
+    MostrarLista(Ls,DistanciaAcumulada(Ls));
+    printf("\t<Lista Ciudades Restantes>\n\n");
+    MostrarLista(Ln,DistanciaAcumulada(Ln));
+    printf("\t<Lista Solucion>\n\n");
+    OrdenarLs(Ls);
+    MostrarLista(Ls,DistanciaAcumulada(Ls));
     return 0;
 }
